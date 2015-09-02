@@ -1,9 +1,10 @@
 package com.fsh.topgui;
 
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -11,16 +12,18 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 
-public class ApplicationWindow {
+public class ApplicationWindow implements WindowListener {
 
 	private Workspace wkspc = new Workspace();
-	
+
+	/*
+	 * Places new windows where there is free space
+	 */
 	public class Coordinator {
 		public Coordinate getCoordinateForNewWindow() {
 			return new Coordinate(100,100);
 		}
 	}
-	
 	private Coordinator coordinator = new Coordinator();
 	
 	private JFrame frame;
@@ -49,31 +52,76 @@ public class ApplicationWindow {
 		initialize();
 	}
 
+	
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 
 	    JMenuBar menuBar = new JMenuBar();
 	    
-	    // build the File menu
-	    JMenu fileMenu = new JMenu("File");
-	    JMenuItem openMenuItem = new JMenuItem("Open");
-	    openMenuItem.addActionListener(new ActionListener() {
+
+	    //
+	    //	Open a position window
+	    //
+	    JMenuItem posMenuItem = new JMenuItem("New Position Window");
+	    posMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Coordinate c = coordinator.getCoordinateForNewWindow();
-				WorkspaceDlg pd = new WorkspaceDlg(100, 100, 450,320);
+				PositionWindow pd = new PositionWindow();
+				
+				pd.addWindowListener(ApplicationWindow.this);
+				
 				pd.setVisible(true);
 				
 				wkspc.addWorkspaceItem(pd);
 			}
 		});
-	    fileMenu.add(openMenuItem);
+
+	    //
+	    //
+	    //
+	    JMenuItem orderMenuItem = new JMenuItem("New Order Window");
+	    orderMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Coordinate c = coordinator.getCoordinateForNewWindow();
+				OrderWindow ow = new OrderWindow();
+				
+				ow.addWindowListener(ApplicationWindow.this);
+				
+				ow.setVisible(true);
+				
+				wkspc.addWorkspaceItem(ow);
+			}
+		});
+	    
+	    //
+	    //
+	    //
+	    JMenuItem tradeMenuItem = new JMenuItem("New Trade Window");
+	    tradeMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Coordinate c = coordinator.getCoordinateForNewWindow();
+				TradeWindow tw = new TradeWindow();
+				
+				tw.addWindowListener(ApplicationWindow.this);
+				
+				tw.setVisible(true);
+				wkspc.addWorkspaceItem(tw);
+			}
+		});
+	    
+	    // build the File menu
+	    JMenu fileMenu = new JMenu("File");
+	    fileMenu.add(posMenuItem);
+	    fileMenu.add(orderMenuItem);
+	    fileMenu.add(tradeMenuItem);
 
 	    JMenuItem saveWkspcMenuItem = new JMenuItem("Save Workspace");
 	    saveWkspcMenuItem.addActionListener(new ActionListener() {
@@ -110,10 +158,51 @@ public class ApplicationWindow {
 	    frame.setJMenuBar(menuBar);
 	 
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    frame.setPreferredSize(new Dimension(400, 300));
+//		frame.setBounds(0, 0, 689, 554);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//	    frame.setPreferredSize(new Dimension(400, 300));
 	    frame.pack();
-	    frame.setLocationRelativeTo(null);
+//	    frame.setLocationRelativeTo(null);
 	    frame.setVisible(true);		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		System.out.println("Closing! " + e.toString());
+		if (e.getWindow() instanceof BaseWindow) {
+			BaseWindow bw = (BaseWindow)e.getWindow();
+			wkspc.removeWorkspaceItem(bw);
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		
 	}
 
 }

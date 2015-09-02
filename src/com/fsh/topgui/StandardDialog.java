@@ -10,7 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-public class WorkspaceDlg extends JDialog implements WorkspaceItem {
+public class StandardDialog extends JDialog implements WorkspaceItem {
 
 	/**
 	 * 
@@ -23,12 +23,27 @@ public class WorkspaceDlg extends JDialog implements WorkspaceItem {
 	/**
 	 * Create the dialog.
 	 */
-	public WorkspaceDlg(Integer x, Integer y, Integer width, Integer height) {
+	public StandardDialog(Integer x, Integer y, Integer width, Integer height) {
+		
+		if (x == null) {
+			x = new Integer(100);
+		}
+		if (y == null) {
+			y = new Integer(100);
+		}
+		if (width == null) {
+			width = new Integer(300);
+		}
+		if (height == null) {
+			height = new Integer(300);
+		}
+				
+		
 		
 		this.height = height;
 		this.width = width;
 		
-		setBounds(x,y,width,height);
+		setBounds(x,y,473,248);
 		
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
@@ -67,22 +82,26 @@ public class WorkspaceDlg extends JDialog implements WorkspaceItem {
 
 	@Override
 	public Integer getWindowPositionX() {
-		return x;
+		return getLocation().x;
 	}
 
 	@Override
 	public Integer getWindowPositionY() {
-		return y;
+		return getLocation().y;
 	}
 
 	@Override
 	public Integer getWindowWidth() {
-		return width;
+		return getSize().width;
 	}
 
 	@Override
 	public Integer getWindowHeight() {
-		return height;
+		return getSize().height;
 	}
 
+	
+	public static void main(String[] args) {
+		new StandardDialog(100, 100, 300, 300).setVisible(true);
+	}
 }

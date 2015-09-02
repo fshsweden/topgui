@@ -15,6 +15,10 @@ public class Workspace {
 	public void addWorkspaceItem(WorkspaceItem item) {
 		items.add(item);
 	}
+	
+	public void removeWorkspaceItem(WorkspaceItem item) {
+		items.remove(item);
+	}
 
 	public void loadWorkspace() {
 		try {
@@ -33,6 +37,12 @@ public class Workspace {
 				Integer height	= ini.get(mainSectionId,"Height",Integer.class);
 				String windowType = ini.get(mainSectionId,"WindowType");
 
+				WindowInfo wi = new WindowInfo();
+				wi.put("X",x.toString());
+				wi.put("Y",y.toString());
+				wi.put("Width",width.toString());
+				wi.put("Height",height.toString());
+				wi.put("WindowType",windowType.toString());
 				
 			}
 			
@@ -52,9 +62,10 @@ public class Workspace {
 			}
 			ini = new Wini(new File(inioutfile.getAbsolutePath()));			
 			
+			// Clear slate!
+			ini.clear();
 			
-			// ini = new Wini(new File("workspace.ini"));
-
+			System.out.println("Saving " + items.size() + " workspace items");
 	        ini.put("app", "num_windows", items.size());
 			
 	        Integer count = 0;

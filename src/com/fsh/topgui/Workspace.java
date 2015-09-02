@@ -16,11 +16,17 @@ public class Workspace {
 		items.add(item);
 	}
 	
+	public void clear() {
+		items.clear();
+	}
+	
 	public void removeWorkspaceItem(WorkspaceItem item) {
 		items.remove(item);
 	}
 
-	public void loadWorkspace() {
+	public List<WindowInfo> loadWorkspace() {
+		List<WindowInfo> res = new ArrayList<WindowInfo>();
+		
 		try {
 			ini = new Wini(new File("workspace.ini"));
 			
@@ -38,18 +44,19 @@ public class Workspace {
 				String windowType = ini.get(mainSectionId,"WindowType");
 
 				WindowInfo wi = new WindowInfo();
-				wi.put("X",x.toString());
-				wi.put("Y",y.toString());
-				wi.put("Width",width.toString());
-				wi.put("Height",height.toString());
+//				wi.put("X",x.toString());
+//				wi.put("Y",y.toString());
+//				wi.put("Width",width.toString());
+//				wi.put("Height",height.toString());
 				wi.put("WindowType",windowType.toString());
 				
+				res.add(wi);
 			}
-			
 		} catch (IOException e) {
-			
-			
+			return null;
 		}
+		
+		return res;
 	}
 
 	public void saveWorkspace() {
@@ -77,7 +84,7 @@ public class Workspace {
 				ini.put(mainSectionId, "Y", w.getWindowPositionY());
 				ini.put(mainSectionId, "Height", w.getWindowHeight());
 				ini.put(mainSectionId, "Width", w.getWindowWidth());
-				ini.put(mainSectionId, "WindcwType", w.getWindowType());
+				ini.put(mainSectionId, "WindowType", w.getWindowType());
 				count++;
 			}
 			

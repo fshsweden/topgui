@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -73,11 +74,8 @@ public class ApplicationWindow implements WindowListener {
 			public void actionPerformed(ActionEvent e) {
 				Coordinate c = coordinator.getCoordinateForNewWindow();
 				PositionWindow pd = new PositionWindow();
-				
 				pd.addWindowListener(ApplicationWindow.this);
-				
 				pd.setVisible(true);
-				
 				wkspc.addWorkspaceItem(pd);
 			}
 		});
@@ -91,11 +89,8 @@ public class ApplicationWindow implements WindowListener {
 			public void actionPerformed(ActionEvent e) {
 				Coordinate c = coordinator.getCoordinateForNewWindow();
 				OrderWindow ow = new OrderWindow();
-				
 				ow.addWindowListener(ApplicationWindow.this);
-				
 				ow.setVisible(true);
-				
 				wkspc.addWorkspaceItem(ow);
 			}
 		});
@@ -136,7 +131,41 @@ public class ApplicationWindow implements WindowListener {
 	    loadWkspcMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				wkspc.loadWorkspace();
+				
+				wkspc.clear();
+				
+				List<WindowInfo> w = wkspc.loadWorkspace();
+				for (WindowInfo wi : w) {
+					switch (wi.get("WindowType")) {
+						case "Trade":
+						{
+							Coordinate c = coordinator.getCoordinateForNewWindow();
+							PositionWindow pd = new PositionWindow();
+							pd.addWindowListener(ApplicationWindow.this);
+							pd.setVisible(true);
+							wkspc.addWorkspaceItem(pd);
+						}
+						break;
+						case "Order":
+						{
+							Coordinate c = coordinator.getCoordinateForNewWindow();
+							OrderWindow ow = new OrderWindow();
+							ow.addWindowListener(ApplicationWindow.this);
+							ow.setVisible(true);
+							wkspc.addWorkspaceItem(ow);
+						}
+						break;
+						case "Position":
+						{
+							Coordinate c = coordinator.getCoordinateForNewWindow();
+							PositionWindow pd = new PositionWindow();
+							pd.addWindowListener(ApplicationWindow.this);
+							pd.setVisible(true);
+							wkspc.addWorkspaceItem(pd);
+						}
+						break;
+					}
+				}
 			}
 		});
 	    fileMenu.add(loadWkspcMenuItem);

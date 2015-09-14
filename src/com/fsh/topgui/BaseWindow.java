@@ -102,4 +102,25 @@ public class BaseWindow extends JFrame  implements WorkspaceItem {
 		return getSize().height;
 	}
 
+	@Override
+	public JFrame getFrame() {
+		return this;
+	}
+
+	@Override
+	public void setWindowPosition(Integer x, Integer y) {
+		setLocation(x, getLocation().y);
+	}
+
+	@Override
+	public void setWindowSize(Integer w, Integer h) {
+		setSize(w, h);
+	}
+
+	@Override
+	public void setWindowType(String t) {
+		// TODO implement this
+		
+	}
+
 }

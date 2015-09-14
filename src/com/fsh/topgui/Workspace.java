@@ -3,26 +3,35 @@ package com.fsh.topgui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.JFrame;
 
 import org.ini4j.Wini;
 
 public class Workspace {
 
-	private List<WorkspaceItem> items = new ArrayList<WorkspaceItem>();
+	private Map<JFrame, WorkspaceItem> items = new HashMap<JFrame, WorkspaceItem>();
 	private Wini ini;
 
 	public void addWorkspaceItem(WorkspaceItem item) {
-		items.add(item);
+		items.put(item.getFrame(), item);
+	}
+	
+	public WorkspaceItem getWorkspaceItem(JFrame frame) {
+		return items.get(frame);
+	}
+	
+	public void removeWorkspaceItem(WorkspaceItem item) {
+		items.remove(item.getFrame());
 	}
 	
 	public void clear() {
 		items.clear();
 	}
 	
-	public void removeWorkspaceItem(WorkspaceItem item) {
-		items.remove(item);
-	}
 
 	public List<WindowInfo> loadWorkspace() {
 		List<WindowInfo> res = new ArrayList<WindowInfo>();
@@ -37,17 +46,17 @@ public class Workspace {
 				String mainSectionId = "win"+count.toString();
 				
 				
-				Integer x		= ini.get(mainSectionId,"PositionX",Integer.class);
-				Integer y		= ini.get(mainSectionId,"PositionY",Integer.class);
+				Integer x		= ini.get(mainSectionId,"X",Integer.class);
+				Integer y		= ini.get(mainSectionId,"Y",Integer.class);
 				Integer width	= ini.get(mainSectionId,"Width",Integer.class);
 				Integer height	= ini.get(mainSectionId,"Height",Integer.class);
 				String windowType = ini.get(mainSectionId,"WindowType");
 
 				WindowInfo wi = new WindowInfo();
-//				wi.put("X",x.toString());
-//				wi.put("Y",y.toString());
-//				wi.put("Width",width.toString());
-//				wi.put("Height",height.toString());
+				wi.put("X",x.toString());
+				wi.put("Y",y.toString());
+				wi.put("Width",width.toString());
+				wi.put("Height",height.toString());
 				wi.put("WindowType",windowType.toString());
 				
 				res.add(wi);
@@ -77,14 +86,14 @@ public class Workspace {
 			
 	        Integer count = 0;
 	        
-			for (WorkspaceItem w : items) {
+			for (WorkspaceItem w : items.values()) {
 				String mainSectionId = "win"+count.toString();
 				ini.put(mainSectionId, "Dlg", "value");
-				ini.put(mainSectionId, "X", w.getWindowPositionX());
-				ini.put(mainSectionId, "Y", w.getWindowPositionY());
-				ini.put(mainSectionId, "Height", w.getWindowHeight());
-				ini.put(mainSectionId, "Width", w.getWindowWidth());
-				ini.put(mainSectionId, "WindowType", w.getWindowType());
+				ini.put(mainSectionId, "X", w.getWindowPositionX());	// WorkspaceItem has a pointer to the JFrame!
+				ini.put(mainSectionId, "Y", w.getWindowPositionY());	// WorkspaceItem has a pointer to the JFrame!
+				ini.put(mainSectionId, "Height", w.getWindowHeight());	// WorkspaceItem has a pointer to the JFrame!
+				ini.put(mainSectionId, "Width", w.getWindowWidth());	// WorkspaceItem has a pointer to the JFrame!
+				ini.put(mainSectionId, "WindowType", w.getWindowType());	
 				count++;
 			}
 			

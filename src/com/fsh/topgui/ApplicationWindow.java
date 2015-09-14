@@ -1,6 +1,8 @@
 package com.fsh.topgui;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -140,9 +142,13 @@ public class ApplicationWindow implements WindowListener {
 						case "Trade":
 						{
 							Coordinate c = coordinator.getCoordinateForNewWindow();
-							PositionWindow pd = new PositionWindow();
+							TradeWindow pd = new TradeWindow();
 							pd.addWindowListener(ApplicationWindow.this);
 							pd.setVisible(true);
+							
+							pd.setLocation(wi.getInt("X"), wi.getInt("Y"));
+							pd.setSize(wi.getInt("Width"), wi.getInt("Height"));
+							
 							wkspc.addWorkspaceItem(pd);
 						}
 						break;
@@ -152,6 +158,10 @@ public class ApplicationWindow implements WindowListener {
 							OrderWindow ow = new OrderWindow();
 							ow.addWindowListener(ApplicationWindow.this);
 							ow.setVisible(true);
+
+							ow.setLocation(wi.getInt("X"), wi.getInt("Y"));
+							ow.setSize(wi.getInt("Width"), wi.getInt("Height"));
+							
 							wkspc.addWorkspaceItem(ow);
 						}
 						break;
@@ -161,6 +171,10 @@ public class ApplicationWindow implements WindowListener {
 							PositionWindow pd = new PositionWindow();
 							pd.addWindowListener(ApplicationWindow.this);
 							pd.setVisible(true);
+
+							pd.setLocation(wi.getInt("X"), wi.getInt("Y"));
+							pd.setSize(wi.getInt("Width"), wi.getInt("Height"));
+							
 							wkspc.addWorkspaceItem(pd);
 						}
 						break;
@@ -226,6 +240,14 @@ public class ApplicationWindow implements WindowListener {
 
 	@Override
 	public void windowActivated(WindowEvent e) {
+		Point loc = e.getWindow().getLocation();
+		Dimension dim = e.getWindow().getSize();
+		
+		JFrame frame = (JFrame)e.getWindow();
+		WorkspaceItem wi = wkspc.getWorkspaceItem(frame);
+		if (frame != null) {
+			
+		}
 		
 	}
 

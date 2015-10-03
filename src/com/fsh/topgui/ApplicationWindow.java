@@ -1,35 +1,25 @@
 package com.fsh.topgui;
 
-import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemModule;
+import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemStatus;
+import com.ev112.codeblack.simpleclient.alphasystem.IAlphaSystemConnectionStatus;
 
-public class ApplicationWindow implements WindowListener {
 
-	private Workspace wkspc = new Workspace();
+public class ApplicationWindow {
 
-	/*
-	 * Places new windows where there is free space
-	 */
-	public class Coordinator {
-		public Coordinate getCoordinateForNewWindow() {
-			return new Coordinate(100,100);
-		}
-	}
-	private Coordinator coordinator = new Coordinator();
-	
+	private Workspace wkspc;
 	private JFrame frame;
+	private AlphaSystem alpha = new AlphaSystem("TESTREMOTE");
 
 	/**
 	 * Launch the application.
@@ -52,20 +42,41 @@ public class ApplicationWindow implements WindowListener {
 	 * Create the application.
 	 */
 	public ApplicationWindow() {
-		initialize();
+		
+		wkspc = new Workspace(alpha);
+		
+		initialize_gui();
+		initialize_alpha();
 	}
-
 	
+	private void initialize_alpha() {
+		alpha.connect(new IAlphaSystemConnectionStatus() {
+			@Override
+			public void alphaConnectionStatus(AlphaSystemModule module, AlphaSystemStatus status) {
+				switch (module) {
+					case PriceCollector:
+					break;
+					case RiskManager:
+					break;
+					case StrategyServer:
+					break;
+				}
+				
+//				for (JFrame jf : wkspc.getAllFrames()) {
+//					jf.alphaConnectionStatus(module, status);					
+//				}
+				
+			}
+		});
+	}
 	
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize_gui() {
 		frame = new JFrame();
-		
 
 	    JMenuBar menuBar = new JMenuBar();
-	    
 
 	    //
 	    //	Open a position window
@@ -74,11 +85,7 @@ public class ApplicationWindow implements WindowListener {
 	    posMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Coordinate c = coordinator.getCoordinateForNewWindow();
-				PositionWindow pd = new PositionWindow();
-				pd.addWindowListener(ApplicationWindow.this);
-				pd.setVisible(true);
-				wkspc.addWorkspaceItem(pd);
+				wkspc.createNewPositionWindow();
 			}
 		});
 
@@ -89,11 +96,7 @@ public class ApplicationWindow implements WindowListener {
 	    orderMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Coordinate c = coordinator.getCoordinateForNewWindow();
-				OrderWindow ow = new OrderWindow();
-				ow.addWindowListener(ApplicationWindow.this);
-				ow.setVisible(true);
-				wkspc.addWorkspaceItem(ow);
+				wkspc.createNewOrderWindow();
 			}
 		});
 	    
@@ -104,13 +107,51 @@ public class ApplicationWindow implements WindowListener {
 	    tradeMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Coordinate c = coordinator.getCoordinateForNewWindow();
-				TradeWindow tw = new TradeWindow();
-				
-				tw.addWindowListener(ApplicationWindow.this);
-				
-				tw.setVisible(true);
-				wkspc.addWorkspaceItem(tw);
+				wkspc.createNewTradeWindow();
+			}
+		});
+
+	    //
+	    //
+	    //
+	    JMenuItem testMenuItem = new JMenuItem("New Test Window");
+	    testMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				wkspc.createNewTestWindow();
+			}
+		});
+
+	    //
+	    //
+	    //
+	    JMenuItem type2MenuItem = new JMenuItem("New Type2 Window");
+	    type2MenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				wkspc.createNewType2Window();
+			}
+		});
+	    
+	    //
+	    //
+	    //
+	    JMenuItem saveWkspcMenuItem = new JMenuItem("Save Workspace");
+	    saveWkspcMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				wkspc.saveWorkspace();
+			}
+		});
+
+	    //
+	    //
+	    //
+	    JMenuItem loadWkspcMenuItem = new JMenuItem("Load Workspace");
+	    loadWkspcMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				wkspc.loadWorkspaceAndInstantiateWindows();
 			}
 		});
 	    
@@ -119,69 +160,9 @@ public class ApplicationWindow implements WindowListener {
 	    fileMenu.add(posMenuItem);
 	    fileMenu.add(orderMenuItem);
 	    fileMenu.add(tradeMenuItem);
-
-	    JMenuItem saveWkspcMenuItem = new JMenuItem("Save Workspace");
-	    saveWkspcMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wkspc.saveWorkspace();
-			}
-		});
+	    fileMenu.add(testMenuItem);
+	    fileMenu.add(type2MenuItem);
 	    fileMenu.add(saveWkspcMenuItem);
-
-	    JMenuItem loadWkspcMenuItem = new JMenuItem("Load Workspace");
-	    loadWkspcMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				wkspc.clear();
-				
-				List<WindowInfo> w = wkspc.loadWorkspace();
-				for (WindowInfo wi : w) {
-					switch (wi.get("WindowType")) {
-						case "Trade":
-						{
-							Coordinate c = coordinator.getCoordinateForNewWindow();
-							TradeWindow pd = new TradeWindow();
-							pd.addWindowListener(ApplicationWindow.this);
-							pd.setVisible(true);
-							
-							pd.setLocation(wi.getInt("X"), wi.getInt("Y"));
-							pd.setSize(wi.getInt("Width"), wi.getInt("Height"));
-							
-							wkspc.addWorkspaceItem(pd);
-						}
-						break;
-						case "Order":
-						{
-							Coordinate c = coordinator.getCoordinateForNewWindow();
-							OrderWindow ow = new OrderWindow();
-							ow.addWindowListener(ApplicationWindow.this);
-							ow.setVisible(true);
-
-							ow.setLocation(wi.getInt("X"), wi.getInt("Y"));
-							ow.setSize(wi.getInt("Width"), wi.getInt("Height"));
-							
-							wkspc.addWorkspaceItem(ow);
-						}
-						break;
-						case "Position":
-						{
-							Coordinate c = coordinator.getCoordinateForNewWindow();
-							PositionWindow pd = new PositionWindow();
-							pd.addWindowListener(ApplicationWindow.this);
-							pd.setVisible(true);
-
-							pd.setLocation(wi.getInt("X"), wi.getInt("Y"));
-							pd.setSize(wi.getInt("Width"), wi.getInt("Height"));
-							
-							wkspc.addWorkspaceItem(pd);
-						}
-						break;
-					}
-				}
-			}
-		});
 	    fileMenu.add(loadWkspcMenuItem);
 	    
 	    // build the Edit menu
@@ -208,52 +189,4 @@ public class ApplicationWindow implements WindowListener {
 //	    frame.setLocationRelativeTo(null);
 	    frame.setVisible(true);		
 	}
-
-	@Override
-	public void windowOpened(WindowEvent e) {
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		System.out.println("Closing! " + e.toString());
-		if (e.getWindow() instanceof BaseWindow) {
-			BaseWindow bw = (BaseWindow)e.getWindow();
-			wkspc.removeWorkspaceItem(bw);
-		}
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-		
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-		Point loc = e.getWindow().getLocation();
-		Dimension dim = e.getWindow().getSize();
-		
-		JFrame frame = (JFrame)e.getWindow();
-		WorkspaceItem wi = wkspc.getWorkspaceItem(frame);
-		if (frame != null) {
-			
-		}
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-		
-	}
-
 }

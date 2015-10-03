@@ -1,26 +1,27 @@
 package com.fsh.topgui;
-
 import javax.swing.JPanel;
 
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
 
-public class PositionWindow extends BaseFrame {
-
-	public PositionWindow(AlphaSystem alpha) {
+public class TestWindow extends EventsFrame {
+	public TestWindow(AlphaSystem alpha) {
 		super(alpha);
-		setTitle("Position Window");
+		setTitle("Test Window");
 	}
-
+	
 	@Override
 	public String getWindowType() {
-		return "Position";
+		return "Test";
 	}
 
 	@Override
 	protected JPanel createContentPane() {
+		JPanel panel = super.createContentPane();
 		
-		// return empty panel
-		return new JPanel();
+		
+		
+		
+		return panel;
 	}
 
 }

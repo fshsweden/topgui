@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.models;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +25,7 @@ import com.ev112.codeblack.common.generated.messages.StatusEvent;
 import com.ev112.codeblack.common.generated.messages.StrategyServer_OwnOrder;
 import com.ev112.codeblack.common.generated.messages.StrategyServer_OwnTrade;
 
-public class ServerStatusModel extends AbstractTableModel {
+public class ServerStatusTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = -8132531768705472386L;
 	private Map<Integer,ServerStatus> serverStatuses = new HashMap<Integer,ServerStatus>();
@@ -107,7 +107,7 @@ public class ServerStatusModel extends AbstractTableModel {
 	/*
 	 * 
 	 */
-	public ServerStatusModel() {
+	public ServerStatusTableModel() {
 		serverStatuses.put(0, new ServerStatus("PriceCollector",""));
 		serverStatuses.put(1, new ServerStatus("StrategyServer",""));
 		serverStatuses.put(2, new ServerStatus("RiskManager",""));

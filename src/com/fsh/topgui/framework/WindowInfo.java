@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.framework;
 
 import java.util.HashMap;
 

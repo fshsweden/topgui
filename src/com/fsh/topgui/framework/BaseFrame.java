@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.framework;
 
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -13,18 +13,18 @@ import com.ev112.codeblack.simpleclient.alphasystem.IAlphaSystemConnectionStatus
 
 public abstract class BaseFrame extends JFrame  implements WorkspaceItem, IAlphaSystemConnectionStatus {
 
-	private AlphaSystem alphaSystem;
+	protected AlphaSystem alphaSystem;
 	private String windowType;
 	
 	/**
 	 * Create the frame.
 	 */
-	public BaseFrame(AlphaSystem alphaSystem) {
+	public BaseFrame() {
 		
 		this.alphaSystem = alphaSystem;
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 347, 481);
+		setBounds(100, 100, 382, 479);
 		// setPreferredSize(preferredSize);
 		setContentPane(createContentPane());
 		

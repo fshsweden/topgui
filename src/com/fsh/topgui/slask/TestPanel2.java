@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.slask;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

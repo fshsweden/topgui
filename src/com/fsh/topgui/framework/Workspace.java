@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.framework;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -16,6 +16,14 @@ import javax.swing.JFrame;
 import org.ini4j.Wini;
 
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.fsh.topgui.models.EventsFrame;
+import com.fsh.topgui.models.EventsTableModel;
+import com.fsh.topgui.models.OrderFrame;
+import com.fsh.topgui.models.PositionFrame;
+import com.fsh.topgui.models.PositionTableModel;
+import com.fsh.topgui.models.ServerStatusFrame;
+import com.fsh.topgui.models.StrategyFrame;
+import com.fsh.topgui.models.TradeFrame;
 
 public class Workspace implements WindowListener {
 
@@ -42,7 +50,6 @@ public class Workspace implements WindowListener {
 		}
 		
 		public Coordinate getCoordinateForNewWindow() {
-			
 			Integer x = getHighestAvailableX();
 			Integer y = 100;
 			if (x > screenDim.getWidth()) {
@@ -61,7 +68,7 @@ public class Workspace implements WindowListener {
 	}
 	
 	private Integer getHighestAvailableX() {
-		Integer min_x = Integer.MIN_VALUE;
+		Integer min_x = 0;
 		for (WorkspaceItem wsi : items.values()) {
 			Integer avail_x = wsi.getWindowPositionX() + wsi.getWindowWidth(); 
 			if (avail_x > min_x) {
@@ -72,7 +79,7 @@ public class Workspace implements WindowListener {
 	}
 	
 	private Integer getHighestAvailableY() {
-		Integer min_y = Integer.MIN_VALUE;
+		Integer min_y = 0;
 		for (WorkspaceItem wsi : items.values()) {
 			Integer avail_y = wsi.getWindowPositionY() + wsi.getWindowHeight();
 			if (avail_y > min_y) {
@@ -171,27 +178,38 @@ public class Workspace implements WindowListener {
 		}
 	}
 	
-	public void createNewPositionWindow() {
+	public void createNewEventsFrame() {
 		Coordinate c = coordinator.getCoordinateForNewWindow();
-		PositionWindow pd = new PositionWindow(alphaSystem);
+		EventsTableModel model = new EventsTableModel(alphaSystem);
+		EventsFrame pd = new EventsFrame(model);
 		pd.setLocation(c.getX(),c.getY());
 		pd.addWindowListener(this);
 		pd.setVisible(true);
 		addWorkspaceItem(pd);
 	}
 
-	public void createNewOrderWindow() {
+	public void createNewPositionFrame() {
 		Coordinate c = coordinator.getCoordinateForNewWindow();
-		OrderWindow ow = new OrderWindow(alphaSystem);
+		PositionTableModel ptm = new PositionTableModel(alphaSystem.getStrategyServerConnection(), "some-id", null /* owner window */);
+		PositionFrame pd = new PositionFrame(alphaSystem);
+		pd.setLocation(c.getX(),c.getY());
+		pd.addWindowListener(this);
+		pd.setVisible(true);
+		addWorkspaceItem(pd);
+	}
+
+	public void createNewOrderFrame() {
+		Coordinate c = coordinator.getCoordinateForNewWindow();
+		OrderFrame ow = new OrderFrame(alphaSystem);
 		ow.setLocation(c.getX(),c.getY());
 		ow.addWindowListener(this);
 		ow.setVisible(true);
 		addWorkspaceItem(ow);
 	}
 
-	public void createNewTradeWindow() {
+	public void createNewTradeFrame() {
 		Coordinate c = coordinator.getCoordinateForNewWindow();
-		TradeWindow tw = new TradeWindow(alphaSystem);
+		TradeFrame tw = new TradeFrame(alphaSystem);
 		tw.setLocation(c.getX(),c.getY());
 		tw.addWindowListener(this);
 		tw.setVisible(true);
@@ -207,13 +225,22 @@ public class Workspace implements WindowListener {
 		addWorkspaceItem(tw);
 	}
 
-	public void createNewType2Window() {
+	public void createNewServerStatusFrame() {
 		Coordinate c = coordinator.getCoordinateForNewWindow();
 		ServerStatusFrame tw = new ServerStatusFrame(alphaSystem);
 		tw.setLocation(c.getX(),c.getY());
 		tw.addWindowListener(this);
 		tw.setVisible(true);
 		addWorkspaceItem(tw);
+	}
+	
+	public void createNewStrategyFrame() {
+		Coordinate c = coordinator.getCoordinateForNewWindow();
+		StrategyFrame s = new StrategyFrame(alphaSystem);
+		s.setLocation(c.getX(),c.getY());
+		s.addWindowListener(this);
+		s.setVisible(true);
+		addWorkspaceItem(s);
 	}
 	
 	public void loadWorkspaceAndInstantiateWindows() {
@@ -251,7 +278,7 @@ public class Workspace implements WindowListener {
 				case "Trade":
 				{
 					Coordinate c = coordinator.getCoordinateForNewWindow();
-					TradeWindow pd = new TradeWindow(alphaSystem);
+					TradeFrame pd = new TradeFrame(alphaSystem);
 					pd.addWindowListener(this);
 					pd.setVisible(true);
 					
@@ -264,7 +291,7 @@ public class Workspace implements WindowListener {
 				case "Order":
 				{
 					Coordinate c = coordinator.getCoordinateForNewWindow();
-					OrderWindow ow = new OrderWindow(alphaSystem);
+					OrderFrame ow = new OrderFrame(alphaSystem);
 					ow.addWindowListener(this);
 					ow.setVisible(true);
 
@@ -277,7 +304,7 @@ public class Workspace implements WindowListener {
 				case "Position":
 				{
 					Coordinate c = coordinator.getCoordinateForNewWindow();
-					PositionWindow pd = new PositionWindow(alphaSystem);
+					PositionFrame pd = new PositionFrame(alphaSystem);
 					pd.addWindowListener(this);
 					pd.setVisible(true);
 

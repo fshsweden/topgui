@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.slask;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

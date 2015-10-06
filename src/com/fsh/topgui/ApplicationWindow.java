@@ -13,13 +13,18 @@ import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemModule;
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemStatus;
 import com.ev112.codeblack.simpleclient.alphasystem.IAlphaSystemConnectionStatus;
+import com.fsh.topgui.framework.Workspace;
 
 
 public class ApplicationWindow {
 
 	private Workspace wkspc;
 	private JFrame frame;
-	private AlphaSystem alpha = new AlphaSystem("TESTREMOTE");
+	private static AlphaSystem alpha = new AlphaSystem("TESTREMOTE");
+	
+	public static AlphaSystem getAlphaInstance() {
+		return alpha;
+	}
 
 	/**
 	 * Launch the application.
@@ -85,7 +90,7 @@ public class ApplicationWindow {
 	    posMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewPositionWindow();
+				wkspc.createNewPositionFrame();
 			}
 		});
 
@@ -96,7 +101,7 @@ public class ApplicationWindow {
 	    orderMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewOrderWindow();
+				wkspc.createNewOrderFrame();
 			}
 		});
 	    
@@ -107,7 +112,7 @@ public class ApplicationWindow {
 	    tradeMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewTradeWindow();
+				wkspc.createNewTradeFrame();
 			}
 		});
 
@@ -125,11 +130,33 @@ public class ApplicationWindow {
 	    //
 	    //
 	    //
-	    JMenuItem type2MenuItem = new JMenuItem("New Type2 Window");
-	    type2MenuItem.addActionListener(new ActionListener() {
+	    JMenuItem eventsMenuItem = new JMenuItem("New Events Window");
+	    eventsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewType2Window();
+				wkspc.createNewEventsFrame();
+			}
+		});
+	    
+	    //
+	    //
+	    //
+	    JMenuItem statusMenuItem = new JMenuItem("New Server Status Window");
+	    statusMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				wkspc.createNewServerStatusFrame();
+			}
+		});
+	    
+	    //
+	    //
+	    //
+	    JMenuItem strategyMenuItem = new JMenuItem("Strategy Window");
+	    strategyMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				wkspc.createNewStrategyFrame();
 			}
 		});
 	    
@@ -161,9 +188,11 @@ public class ApplicationWindow {
 	    fileMenu.add(orderMenuItem);
 	    fileMenu.add(tradeMenuItem);
 	    fileMenu.add(testMenuItem);
-	    fileMenu.add(type2MenuItem);
+	    fileMenu.add(statusMenuItem);
+	    fileMenu.add(eventsMenuItem);
 	    fileMenu.add(saveWkspcMenuItem);
 	    fileMenu.add(loadWkspcMenuItem);
+	    fileMenu.add(strategyMenuItem);
 	    
 	    // build the Edit menu
 	    JMenu editMenu = new JMenu("Edit");

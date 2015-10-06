@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.models;
 
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -8,14 +8,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.fsh.topgui.framework.BaseFrame;
 
 import net.miginfocom.swing.MigLayout;
 
-public class OrderWindow extends BaseFrame {
+public class OrderFrame extends BaseFrame {
 
-	public OrderWindow(AlphaSystem alpha) {
-		super(alpha);
+	public OrderFrame() {
+		super();
 		setTitle("Order Window");
 	}
 

@@ -1,13 +1,16 @@
-package com.fsh.topgui;
+package com.fsh.topgui.models;
 
 import javax.swing.JPanel;
 
-import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.fsh.topgui.framework.BaseFrame;
 
-public class PositionWindow extends BaseFrame {
+public class PositionFrame extends BaseFrame {
 
-	public PositionWindow(AlphaSystem alpha) {
-		super(alpha);
+	PositionTableModel positionModel;
+	
+	public PositionFrame(PositionTableModel ptm) {
+		super();
+		positionModel = ptm;
 		setTitle("Position Window");
 	}
 

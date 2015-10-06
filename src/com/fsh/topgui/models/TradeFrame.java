@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.models;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -14,12 +14,13 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.fsh.topgui.framework.BaseFrame;
 
 import net.miginfocom.swing.MigLayout;
 
-public class TradeWindow extends BaseFrame {
+public class TradeFrame extends BaseFrame {
 
+	private OwnOrderTradesTableModel ownOrderTradesModel;
 	/**
 	 * Helper class for when switch boxes change
 	 */
@@ -40,8 +41,9 @@ public class TradeWindow extends BaseFrame {
 	
 	
 	
-	public TradeWindow(AlphaSystem alpha) {
-		super(alpha);
+	public TradeFrame(OwnOrderTradesTableModel model) {
+		super();
+		ownOrderTradesModel = model;
 		setTitle("Trade Window");
 		getContentPane().setLayout(new MigLayout("", "[]", "[]"));
 	}

@@ -1,4 +1,4 @@
-package com.fsh.topgui;
+package com.fsh.topgui.models;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -9,13 +9,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.fsh.topgui.framework.BaseFrame;
 
 import net.miginfocom.swing.MigLayout;
 
 public class TestMigFrame extends BaseFrame {
-	public TestMigFrame(AlphaSystem alpha) {
-		super(alpha);
+	public TestMigFrame() {
+		super();
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
 import com.fsh.topgui.models.EventsFrame;
 import com.fsh.topgui.models.EventsTableModel;
 import com.fsh.topgui.models.OrderFrame;
+import com.fsh.topgui.models.OwnOrderTradesTableModel;
 import com.fsh.topgui.models.PositionFrame;
 import com.fsh.topgui.models.PositionTableModel;
 import com.fsh.topgui.models.ServerStatusFrame;
@@ -191,7 +192,7 @@ public class Workspace implements WindowListener {
 	public void createNewPositionFrame() {
 		Coordinate c = coordinator.getCoordinateForNewWindow();
 		PositionTableModel ptm = new PositionTableModel(alphaSystem.getStrategyServerConnection(), "some-id", null /* owner window */);
-		PositionFrame pd = new PositionFrame(alphaSystem);
+		PositionFrame pd = new PositionFrame(ptm);
 		pd.setLocation(c.getX(),c.getY());
 		pd.addWindowListener(this);
 		pd.setVisible(true);
@@ -200,7 +201,8 @@ public class Workspace implements WindowListener {
 
 	public void createNewOrderFrame() {
 		Coordinate c = coordinator.getCoordinateForNewWindow();
-		OrderFrame ow = new OrderFrame(alphaSystem);
+		OwnOrderTradesTableModel otm = new OwnOrderTradesTableModel("some-other-id");
+		OrderFrame ow = new OrderFrame(otm);
 		ow.setLocation(c.getX(),c.getY());
 		ow.addWindowListener(this);
 		ow.setVisible(true);

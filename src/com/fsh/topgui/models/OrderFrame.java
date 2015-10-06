@@ -14,8 +14,11 @@ import net.miginfocom.swing.MigLayout;
 
 public class OrderFrame extends BaseFrame {
 
-	public OrderFrame() {
+	private OwnOrderTradesTableModel ownOrderTradesModel;
+	
+	public OrderFrame(OwnOrderTradesTableModel otm) {
 		super();
+		ownOrderTradesModel = otm;
 		setTitle("Order Window");
 	}
 

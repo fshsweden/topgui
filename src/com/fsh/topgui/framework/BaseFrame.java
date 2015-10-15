@@ -7,11 +7,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemConnectionEventHandler;
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemModule;
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemStatus;
-import com.ev112.codeblack.simpleclient.alphasystem.IAlphaSystemConnectionStatus;
 
-public abstract class BaseFrame extends JFrame  implements WorkspaceItem, IAlphaSystemConnectionStatus {
+public abstract class BaseFrame extends JFrame  implements WorkspaceItem, AlphaSystemConnectionEventHandler {
 
 	protected AlphaSystem alphaSystem;
 	private String windowType;
@@ -22,6 +22,10 @@ public abstract class BaseFrame extends JFrame  implements WorkspaceItem, IAlpha
 	public BaseFrame() {
 		
 		this.alphaSystem = alphaSystem;
+		
+	}
+	
+	protected void setup() {
 		
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 382, 479);
@@ -49,7 +53,6 @@ public abstract class BaseFrame extends JFrame  implements WorkspaceItem, IAlpha
 		        System.out.println("BaseFrame::componentHidden");           
 			}
 		});		
-		
 		
 		pack();
 		setVisible(true);

@@ -1,35 +1,17 @@
 package com.fsh.topgui.models;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.prefs.Preferences;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import com.ev112.codeblack.atc.ATCMain;
 import com.ev112.codeblack.atc.PlotIFrame;
 import com.ev112.codeblack.atc.lookandfeel.AtcFormatters;
-import com.ev112.codeblack.common.generated.messages.ManualTestCancelOrderReq;
 import com.ev112.codeblack.common.generated.messages.StrategyServer_OwnOrder;
 import com.ev112.codeblack.common.generated.messages.StrategyServer_OwnTrade;
 import com.ev112.codeblack.common.ordercontroller.OrderStates;
@@ -38,7 +20,6 @@ import com.ev112.codeblack.common.ordercontroller.OrderTypeX;
 import com.ev112.codeblack.common.strategy.OrderTradeTableEntry.TYPE;
 import com.ev112.codeblack.common.strategy.PlotContent;
 import com.ev112.codeblack.workbench.gui.tools.MessageBox;
-import com.ev112.codeblack.workbench.gui.tools.PlayAudio;
 import com.ev112.codeblack.workbench.gui.tools.StaticColumnData;
 import com.fsh.topgui.framework.AlphaTableRenderer;
 
@@ -52,13 +33,13 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 	private static final long serialVersionUID = 1L;
 
 	// Define columns
-	private final StaticColumnData[] mColumnData = {
-		  new StaticColumnData("Time", 60, JLabel.LEFT, String.class, null, null)
-		, new StaticColumnData("Type", 50, JLabel.LEFT, String.class, null, null)
-		, new StaticColumnData("OrdTyp", 20, JLabel.LEFT, String.class, null, null)
-		, new StaticColumnData("Symbol", 50, JLabel.LEFT, String.class, null, null)
-		, new StaticColumnData("VolxPrice", 80, JLabel.RIGHT, String.class, null, null)
-		, new StaticColumnData("Strategy", 80, JLabel.LEFT, String.class, null, null)
+	public final StaticColumnData[] mColumnData = {
+		  new StaticColumnData("Time"		, 60, JLabel.LEFT, String.class, null, null)
+		, new StaticColumnData("Type"		, 50, JLabel.LEFT, String.class, null, null)
+		, new StaticColumnData("OrdTyp"		, 20, JLabel.LEFT, String.class, null, null)
+		, new StaticColumnData("Symbol"		, 50, JLabel.LEFT, String.class, null, null)
+		, new StaticColumnData("VolxPrice"	, 80, JLabel.RIGHT, String.class, null, null)
+		, new StaticColumnData("Strategy"	, 80, JLabel.LEFT, String.class, null, null)
 //		  new StaticColumnData("Time", 60, JLabel.LEFT, String.class, null, null)
 //		, new StaticColumnData("Strategy", 80, JLabel.LEFT, String.class, null, null)
 //		, new StaticColumnData("Type", 15, JLabel.LEFT, String.class, null, null)
@@ -82,24 +63,14 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 	final AlphaTableRenderer mResultRenderer;
 	
 	// List of own orders and trades;
-	private final LinkedList<RowData> mRows = new LinkedList<RowData>();
-	private final LinkedList<RowData> mSelectedRows = new LinkedList<RowData>();
-	
-	// Display switches
-	private final JCheckBox mActiveBox = new JCheckBox("Active only", false);
-	private final JCheckBox mReverseTimeBox = new JCheckBox("Latest first", true);
-	private final JCheckBox mOrderBox = new JCheckBox("Orders", true);
-	private final JCheckBox mTradeBox = new JCheckBox("Trades", true);
-	private final JCheckBox mSoundBox = new JCheckBox("Sound", false);
+	public final LinkedList<RowData> mRows = new LinkedList<RowData>();
+	public final LinkedList<RowData> mSelectedRows = new LinkedList<RowData>();
 	
 	// Map of symbols - PlotIFrame
 	private final HashMap<String, PlotIFrame> mPlotMap = new HashMap<String, PlotIFrame>();
 	
 	// Id
-	private final String mId;
-	
-	// Table
-	private JTable mTable;
+	public final String mId;
 	
 	/**
 	 * ServerTableModel constructor
@@ -113,9 +84,6 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 			tData.mRenderer = mResultRenderer;
 		}
 		
-		// Default sound to on if in production
-		mSoundBox.setSelected(ATCMain.getInstance().isProduction());
-		
 		mPriceFormatter.setGroupingUsed(false);
 		mPriceFormatter.setMaximumFractionDigits(2);
 		mPriceFormatter.setMinimumFractionDigits(2);
@@ -124,98 +92,6 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 		mVolumeFormatter.setMaximumFractionDigits(4);
 		mVolumeFormatter.setMinimumFractionDigits(0);
 
-	}
-	
-	/**
-	 * Get JTable -- create a JTable mapped to this model
-	 * <br>
-	 * Yes this kind of breaks model view paradigm, but it is convenient...
-	 */
-	public JComponent getComponent(final Window pOwner) {
-		JPanel tPanel = new JPanel(new BorderLayout());
-		
-		mTable = new JTable(this) {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public String getToolTipText(MouseEvent e) {
-				return getRowDataForRow(convertRowIndexToModel(rowAtPoint(e.getPoint()))).getTooltipText();
-			}
-		};
-		tPanel.add(new JScrollPane(mTable), BorderLayout.CENTER);
-		mTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		mTable.setGridColor(Color.BLACK);
-		mTable.setAutoCreateRowSorter(true);
-		mTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-		// Set table attributes
-		StaticColumnData.setColumnAttributes(mColumnData, mTable, mId, mResultRenderer, null);
-		mResultRenderer.setColumnAttributes(mTable.getColumnModel(), mColumnData);
-		mTable.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
-		mTable.getTableHeader().setDefaultRenderer(mResultRenderer);
-		
-
-		// Popups
-		
-		final OrderPopupMenu tPopupMenu = new OrderPopupMenu();
-		
-		final JMenuItem tOrderInfoItem = new JMenuItem();
-		tPopupMenu.add(tOrderInfoItem);
-		tOrderInfoItem.setEnabled(false);
-		
-		final JMenuItem tOrderIdItem = new JMenuItem();
-		tPopupMenu.add(tOrderIdItem);
-		tOrderIdItem.setEnabled(false);
-		tPopupMenu.addSeparator();
-		JMenuItem tCancelItem = new JMenuItem("Cancel");
-		tPopupMenu.add(tCancelItem);
-		tCancelItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ManualTestCancelOrderReq tReq = new ManualTestCancelOrderReq();
-				tReq.setOrderId(tPopupMenu.getOrderRowData().getId());
-				tReq.setOwnReference(tPopupMenu.getOrderRowData().getOwnReference());
-
-				ATCMain.getInstance().getServerModel().sendTestOrderMessage(tReq);
-				
-			}
-		});
-		
-		mTable.addMouseListener(new MouseAdapter() {
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON3 || e.getClickCount() == 2) {
-					int tRow = mTable.convertRowIndexToModel(mTable.rowAtPoint(e.getPoint()));
-					if (tRow >= 0 && mRows.get(tRow) instanceof OrderRowData) {
-						OrderRowData tOrderData = (OrderRowData) mRows.get(tRow);
-						tPopupMenu.setOrderRowData(tOrderData);
-						tOrderInfoItem.setText(tOrderData.getTooltipText());
-						tOrderIdItem.setText("Id " + tOrderData.getId());
-						tPopupMenu.show(e.getComponent(), e.getX(), e.getY());
-					}
-				}
-			}
-		});
-
-		
-		// Do command line at bottom
-		JPanel tCmdPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		tPanel.add(tCmdPanel, BorderLayout.PAGE_END);
-		
-		tCmdPanel.add(mActiveBox);
-		tCmdPanel.add(mReverseTimeBox);
-		tCmdPanel.add(mOrderBox);
-		tCmdPanel.add(mTradeBox);
-		tCmdPanel.add(mSoundBox);
-		
-		SwitchActionListener tSwitchListener = new SwitchActionListener();
-		mActiveBox.addActionListener(tSwitchListener);
-		mReverseTimeBox.addActionListener(tSwitchListener);
-		mOrderBox.addActionListener(tSwitchListener);
-		mTradeBox.addActionListener(tSwitchListener);
-		
-		return tPanel;
 	}
 	
 	@Override
@@ -300,9 +176,8 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 		}
 	}
 	
-	private RowData getRowDataForRow(int rowIndex) {
-		return mSelectedRows.get(
-				mReverseTimeBox.isSelected() ? mSelectedRows.size() - 1 - rowIndex : rowIndex);
+	public RowData getRowDataForRow(int rowIndex) {
+		return mSelectedRows.get(/* mReverseTimeBox.isSelected() ? mSelectedRows.size() - 1 - rowIndex : */ rowIndex);
 	}
 	
 	public void addOrder(StrategyServer_OwnOrder pOrder, boolean pBroadcast) {
@@ -316,7 +191,7 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 				if (tRow instanceof OrderRowData) {
 					((OrderRowData) tRow).replaceOrder(pOrder);
 					updateSelectedRows();
-					sendRowToPlot(tRow);
+	//				sendRowToPlot(tRow);
 					return;
 				}
 			}
@@ -326,7 +201,7 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 		OrderRowData tRow = new OrderRowData(pOrder);
 		insertRow(tRow);
 		updateSelectedRows();
-		sendRowToPlot(tRow);
+//		sendRowToPlot(tRow);
 		
 		// Show dialog if order is in error
 		if (pOrder.getErrorStatus() != null && pOrder.getErrorStatus().length() > 0) {
@@ -341,23 +216,22 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 				ATCMain.getInstance().isProduction());
 		}
 
-		if (mSoundBox.isSelected() && pBroadcast) {
-			beep();
-		}
+//		if (mSoundBox.isSelected() && pBroadcast) {
+//			beep();
+//		}
 
 	}
 	
 	public void addTrade(StrategyServer_OwnTrade pTrade, boolean pBroadcast) {
 		RowData tRow = new TradeRowData(pTrade);
 		insertRow(tRow);
-		sendRowToPlot(tRow);
-		sendTradeToStrategyModel(pTrade);
+//		sendRowToPlot(tRow);
 		
 		updateSelectedRows();
 
-		if (mSoundBox.isSelected() && pBroadcast) {
-			//beep();
-		}
+//		if (mSoundBox.isSelected() && pBroadcast) {
+//			//beep();
+//		}
 
 	}
 	
@@ -374,12 +248,13 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 	}
 	
 	void setSoundOn(boolean pOn) {
-		mSoundBox.setSelected(pOn);
+		/* mSoundBox.setSelected(pOn); */
 	}
 	
-	boolean isSoundOn() { return mSoundBox.isSelected(); }
+	/* boolean isSoundOn() { return mSoundBox.isSelected(); } */
 	
 	void beep() {
+		/*
 		if (mSoundBox.isSelected()) {
 			try {
 				PlayAudio.playFile("connect.wav");
@@ -387,6 +262,7 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 				e.printStackTrace();
 			}
 		}
+		*/
 	}
 	
 	void updateSelectedRows() {
@@ -394,15 +270,15 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 		for (RowData tRow : mRows) {
 			
 			// Screen entries with regard to active, order and trade
-			if (mActiveBox.isSelected() && !tRow.isActive()) {
+//			if (mActiveBox.isSelected() && !tRow.isActive()) {
+//				continue;
+//			}
+			
+			if (tRow.getType() == TYPE.OWN_ORDER /* && !mOrderBox.isSelected()*/ ) {
 				continue;
 			}
 			
-			if (tRow.getType() == TYPE.OWN_ORDER && !mOrderBox.isSelected()) {
-				continue;
-			}
-			
-			if (tRow.getType() == TYPE.OWN_TRADE && !mTradeBox.isSelected()) {
+			if (tRow.getType() == TYPE.OWN_TRADE /* && !mTradeBox.isSelected() */ ) {
 				continue;
 			}
 			
@@ -423,14 +299,15 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 		mPlotMap.put(pSymbol, pPlot);
 		
 		// Push down everything we have so far
-		for (RowData tRow : mRows) {
-			sendRowToPlot(tRow);
-		}
+//		for (RowData tRow : mRows) {
+//			sendRowToPlot(tRow);
+//		}
 	}
 	
 	/**
 	 * This method sends the contents of one row to the plotter
 	 */
+/*	
 	private void sendRowToPlot(RowData pRow) {
 		PlotIFrame tPlot = mPlotMap.get(pRow.getSymbol());
 		if (tPlot != null) {
@@ -449,20 +326,14 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 			}
 		}
 	}
-	
-	/**
-	 * Send trades to the strategy model
-	 */
-	private void sendTradeToStrategyModel(StrategyServer_OwnTrade pTrade) {
-		ATCMain.getInstance().getStrategyModel().addTrade(pTrade);
-	}
+*/
 	
 	/**
 	 * Save preferences
 	 */
-	public void savePreferences(Preferences pPrefs) {
-		StaticColumnData.savePreferences(pPrefs, mColumnData, mTable, mId);
-	}
+//	public void savePreferences(Preferences pPrefs) {
+//		StaticColumnData.savePreferences(pPrefs, mColumnData, mTable, mId);
+//	}
 	
 	abstract class RowData implements PlotContent {
 		public abstract String getId();
@@ -725,13 +596,4 @@ public class OwnOrderTradesTableModel extends AbstractTableModel{
 		}
 		
 	}
-	
-	class SwitchActionListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			updateSelectedRows();
-		}
-	}
-		
 }

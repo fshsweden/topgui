@@ -31,7 +31,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 
-import com.ev112.codeblack.atc.connections.PriceCollectorConnectionEventHandler;
+import com.ev112.codeblack.atc.connections.PriceCollectorEventHandler;
 import com.ev112.codeblack.atc.connections.StrategyServerConnection;
 import com.ev112.codeblack.atc.lookandfeel.AtcFormatters;
 import com.ev112.codeblack.common.generated.messages.PLPosition;
@@ -667,7 +667,7 @@ public class PositionTableModel extends AbstractTableModel {
 	/**
 	 * Helper class to wrap all strategy data
 	 */
-	class PositionData implements PriceCollectorConnectionEventHandler {
+	class PositionData implements PriceCollectorEventHandler {
 		final String mStrategyId;
 		final String mPLUnitId;
 		final String mSymbol;

@@ -14,8 +14,13 @@ import com.fsh.topgui.framework.BaseFrame;
 
 public class ServerStatusFrame extends BaseFrame {
 	
-	public ServerStatusFrame() {
+	private static final long serialVersionUID = -4938707070446203648L;
+	
+	private ServerStatusTableModel model;
+	
+	public ServerStatusFrame(ServerStatusTableModel m) {
 		super();
+		model = m;
 	}
 
 	@Override

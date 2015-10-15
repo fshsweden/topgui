@@ -25,7 +25,7 @@ import javax.swing.table.AbstractTableModel;
 
 import com.ev112.codeblack.atc.ATCMain;
 import com.ev112.codeblack.atc.PositionBox;
-import com.ev112.codeblack.atc.connections.PriceCollectorConnectionEventHandler;
+import com.ev112.codeblack.atc.connections.PriceCollectorEventHandler;
 import com.ev112.codeblack.atc.connections.StrategyServerConnection;
 import com.ev112.codeblack.atc.lookandfeel.AtcFormatters;
 import com.ev112.codeblack.common.generated.messages.NameValuePair;
@@ -456,7 +456,7 @@ public class StrategyDetailTableModel extends AbstractTableModel {
 	/**
 	 * Helper class to wrap all strategy data
 	 */
-	class StrategyData implements PriceCollectorConnectionEventHandler {
+	class StrategyData implements PriceCollectorEventHandler {
 		
 		private PLStrategy mStrategy;
 

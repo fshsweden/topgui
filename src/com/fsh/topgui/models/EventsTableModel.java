@@ -9,12 +9,33 @@ import javax.swing.JLabel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.ev112.codeblack.atc.connections.PriceCollectorEventHandler;
+import com.ev112.codeblack.atc.connections.RiskControllerConnectionEventHandler;
+import com.ev112.codeblack.atc.connections.StrategyServerConnectionEventHandler;
+import com.ev112.codeblack.common.generated.messages.PLStrategy;
+import com.ev112.codeblack.common.generated.messages.PriceCollectorClockPulseBdx;
+import com.ev112.codeblack.common.generated.messages.PriceCollectorFacilityBdx;
+import com.ev112.codeblack.common.generated.messages.PriceCollectorQuoteBdx;
+import com.ev112.codeblack.common.generated.messages.PriceCollectorReplayStartedBdx;
+import com.ev112.codeblack.common.generated.messages.PriceCollectorReplayStoppedBdx;
+import com.ev112.codeblack.common.generated.messages.PriceCollectorTradeBdx;
+import com.ev112.codeblack.common.generated.messages.RiskController_PositionStatusBdx;
 import com.ev112.codeblack.common.generated.messages.StatusEvent;
+import com.ev112.codeblack.common.generated.messages.StrategyServer_OwnOrder;
+import com.ev112.codeblack.common.generated.messages.StrategyServer_OwnTrade;
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.ev112.codeblack.simpleclient.alphasystem.IAlphaSystemEventHandler;
 import com.ev112.codeblack.workbench.gui.tools.StaticColumnData;
 import com.fsh.topgui.framework.BaseTableModel;
 
-public class EventsTableModel extends BaseTableModel {
+/*	The EventsTableModel handles 
+ * 		- the event data for a JTable  (extends AbstractTableModel)
+ * 		- 
+ * 
+ * 
+ * 
+ */
+public class EventsTableModel extends BaseTableModel implements IAlphaSystemEventHandler, StrategyServerConnectionEventHandler, RiskControllerConnectionEventHandler, PriceCollectorEventHandler {
 
 	private static final long serialVersionUID = -8132531768705472386L;
 
@@ -25,7 +46,6 @@ public class EventsTableModel extends BaseTableModel {
 		, new StaticColumnData("Severity", 50, JLabel.LEFT, String.class, null, null)
 		, new StaticColumnData("Message", 400, JLabel.LEFT, String.class, null, null)
 	};
-	
 
 	// Time formatter
 	private final SimpleDateFormat mTimeFormatter = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -55,6 +75,11 @@ public class EventsTableModel extends BaseTableModel {
 	public EventsTableModel(AlphaSystem a) {
 		super(a);
 		super.setupColumns(mColumnData);
+		
+		alphaSystem.addSystemEventHandler(this);
+		alphaSystem.addStrategyHandler(this);
+		alphaSystem.addRiskControllerEventHandler(this);
+		alphaSystem.addPriceCollectorEventHandler(this);
 	}
 	
 	
@@ -228,6 +253,127 @@ public class EventsTableModel extends BaseTableModel {
 			}
 		}
 		fireTableDataChanged();
+	}
+
+
+	
+	
+	@Override
+	public void handleEvent(StatusEvent pEvents) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void addEvent(List<StatusEvent> pEvents) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void strategyLoaded(String strategy, Integer status) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void strategyUnloaded(String strategy, Integer status) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void strategyListReply(List<PLStrategy> pStrategies) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void strategyListUpdated(List<PLStrategy> pStrategies) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void setMatcher(String pMatcher) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void addOrder(StrategyServer_OwnOrder pOrder, boolean pBroadcast) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void addTrade(StrategyServer_OwnTrade pTrade, boolean pBroadcast) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void priceCollectorTradeEvent(PriceCollectorTradeBdx pBdx) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void priceCollectorQuoteEvent(PriceCollectorQuoteBdx pBdx) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void priceCollectorReplayStarted(PriceCollectorReplayStartedBdx pBdx) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void priceCollectorReplayStopped(PriceCollectorReplayStoppedBdx pBdx) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void priceCollectorClockPulseEvent(PriceCollectorClockPulseBdx pBdx) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void facilityUpdate(PriceCollectorFacilityBdx pBdx) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void priceCollectorStatusEvent(List<StatusEvent> pEvents) {
+		// TODO implement this
+		
+	}
+
+
+	@Override
+	public void updateRiskData(RiskController_PositionStatusBdx pRiskUpdate) {
+		// TODO implement this
+		
 	}
 	
 

@@ -9,15 +9,15 @@ import javax.swing.table.AbstractTableModel;
 import com.ev112.codeblack.atc.connections.CONNECTION_STATUS;
 import com.ev112.codeblack.atc.connections.PriceCollectorConnection;
 import com.ev112.codeblack.atc.connections.PriceCollectorConnection;
-import com.ev112.codeblack.atc.connections.PriceConnectionCallback;
-import com.ev112.codeblack.atc.connections.RiskConnectionCallback;
+import com.ev112.codeblack.atc.connections.PriceCollectorConnectionEventHandler;
 import com.ev112.codeblack.atc.connections.RiskControllerConnection;
 import com.ev112.codeblack.atc.connections.RiskControllerConnection;
+import com.ev112.codeblack.atc.connections.RiskControllerConnectionEventHandler;
 import com.ev112.codeblack.atc.connections.ServerConnection;
-import com.ev112.codeblack.atc.connections.ServerConnectionCallback;
-import com.ev112.codeblack.atc.connections.StrategyConnectionCallback;
+import com.ev112.codeblack.atc.connections.ServerConnectionEventHandler;
 import com.ev112.codeblack.atc.connections.StrategyServerConnection;
 import com.ev112.codeblack.atc.connections.StrategyServerConnection;
+import com.ev112.codeblack.atc.connections.StrategyServerConnectionEventHandler;
 import com.ev112.codeblack.common.configuration.Configuration;
 import com.ev112.codeblack.common.generated.messages.PLStrategy;
 import com.ev112.codeblack.common.generated.messages.RiskController_PositionStatusBdx;
@@ -114,9 +114,9 @@ public class ServerStatusTableModel extends AbstractTableModel {
 
 		config = new Configuration("TESTREMOTE");
 		
-		ServerConnectionCallback serverStrategySCC = new ServerConnectionCallback() {
+		ServerConnectionEventHandler serverStrategySCC = new ServerConnectionEventHandler() {
 			@Override
-			public void serverStatisticsUpdate() {
+			public void serverStatisticsUpdate(int in, int out) {
 				System.out.println("SS serverStatisticsUpdate()");
 				fireTableDataChanged();			
 			}
@@ -128,7 +128,7 @@ public class ServerStatusTableModel extends AbstractTableModel {
 			}
 		};
 		
-		StrategyConnectionCallback strategySCC = new StrategyConnectionCallback() {
+		StrategyServerConnectionEventHandler strategySCC = new StrategyServerConnectionEventHandler() {
 			@Override
 			public void strategyUnloaded(String strategy, Integer status) {
 			}
@@ -164,9 +164,9 @@ public class ServerStatusTableModel extends AbstractTableModel {
 		
 		strategyServerConnection = new StrategyServerConnection(serverStrategySCC, strategySCC, config, "StrategyServer", true);
 		
-		ServerConnectionCallback serverPriceSCC = new ServerConnectionCallback() {  // BUG: missing ServerConnection handle!
+		ServerConnectionEventHandler serverPriceSCC = new ServerConnectionEventHandler() {  // BUG: missing ServerConnection handle!
 			@Override
-			public void serverStatisticsUpdate() {
+			public void serverStatisticsUpdate(int in, int out) {
 				System.out.println("PC serverStatisticsUpdate()");
 				fireTableDataChanged();
 			}
@@ -177,16 +177,16 @@ public class ServerStatusTableModel extends AbstractTableModel {
 			}
 		};
 		
-		PriceConnectionCallback priceSCC = new PriceConnectionCallback() {
+		PriceCollectorConnectionEventHandler priceSCC = new PriceCollectorConnectionEventHandler() {
 			@Override
 			public void addEvent(List<StatusEvent> pEvents) {
 			}
 		};
 		priceCollectorConnection = new PriceCollectorConnection(serverPriceSCC, priceSCC, config, "PriceCollector", true);
 		
-		ServerConnectionCallback serverRiskSCC = new ServerConnectionCallback() {
+		ServerConnectionEventHandler serverRiskSCC = new ServerConnectionEventHandler() {
 			@Override
-			public void serverStatisticsUpdate() {
+			public void serverStatisticsUpdate(int in, int out) {
 				System.out.println("RM serverStatisticsUpdate()");
 				fireTableDataChanged();
 			}
@@ -197,7 +197,7 @@ public class ServerStatusTableModel extends AbstractTableModel {
 			}
 		};
 		
-		RiskConnectionCallback riskSCC = new RiskConnectionCallback() {
+		RiskControllerConnectionEventHandler riskSCC = new RiskControllerConnectionEventHandler() {
 			@Override
 			public void updateRiskData(RiskController_PositionStatusBdx pRiskUpdate) {
 				// TODO implement this

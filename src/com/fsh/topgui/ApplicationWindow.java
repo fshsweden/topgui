@@ -9,11 +9,20 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import com.ev112.codeblack.atc.connections.PriceCollectorEventHandler;
+import com.ev112.codeblack.atc.connections.RiskControllerConnectionEventHandler;
+import com.ev112.codeblack.atc.connections.StrategyServerConnectionEventHandler;
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystem;
+import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemConnectionEventHandler;
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemModule;
 import com.ev112.codeblack.simpleclient.alphasystem.AlphaSystemStatus;
-import com.ev112.codeblack.simpleclient.alphasystem.IAlphaSystemConnectionStatus;
+import com.fsh.topgui.framework.BaseFrame;
+import com.fsh.topgui.framework.Coordinate;
 import com.fsh.topgui.framework.Workspace;
+import com.fsh.topgui.models.OrderTradeFrame;
+import com.fsh.topgui.models.OwnOrderTradesTableModel;
+import com.fsh.topgui.models.ServerStatusFrame;
+import com.fsh.topgui.models.ServerStatusTableModel;
 
 
 public class ApplicationWindow {
@@ -54,16 +63,44 @@ public class ApplicationWindow {
 		initialize_alpha();
 	}
 	
+	private PriceCollectorEventHandler	pcEH;
+	private StrategyServerConnectionEventHandler	ssEH;
+	private RiskControllerConnectionEventHandler	rmEH;
+	
 	private void initialize_alpha() {
-		alpha.connect(new IAlphaSystemConnectionStatus() {
+		alpha.connect(new AlphaSystemConnectionEventHandler() {
 			@Override
 			public void alphaConnectionStatus(AlphaSystemModule module, AlphaSystemStatus status) {
 				switch (module) {
 					case PriceCollector:
+						if (status == AlphaSystemStatus.Connected)
+						{
+							System.out.println("PriceCollector disconnected....");
+						}
+						else
+						{
+							
+						}
 					break;
 					case RiskManager:
+						if (status == AlphaSystemStatus.Connected)
+						{
+							System.out.println("Riskmanager disconnected....");
+						}
+						else
+						{
+							
+						}
 					break;
 					case StrategyServer:
+						if (status == AlphaSystemStatus.Connected)
+						{
+							System.out.println("StrategyServer connected....");
+						}
+						else
+						{
+							System.out.println("StrategyServer disconnected....");
+						}
 					break;
 				}
 				
@@ -73,6 +110,83 @@ public class ApplicationWindow {
 				
 			}
 		});
+	}
+	
+
+	
+	public void createNewEventsFrame() {
+//		Coordinate c = wkspc.getCoordinateForNewWindow();
+//		EventsTableModel model = new EventsTableModel(alphaSystem);
+//		EventsFrame pd = new EventsFrame(model);
+//		pd.setLocation(c.getX(),c.getY());
+//		pd.setVisible(true);
+//		wkspc.addWorkspaceItem(pd);
+	}
+
+	public void createNewPositionFrame() {
+//		Coordinate c = wkspc.getCoordinateForNewWindow();
+//		PositionTableModel ptm = new PositionTableModel(alphaSystem.getStrategyServerConnection(), "some-id", null /* owner window */);
+//		PositionFrame pd = new PositionFrame(ptm);
+//		pd.setLocation(c.getX(),c.getY());
+//		pd.setVisible(true);
+//		wkspc.addWorkspaceItem(pd);
+	}
+
+
+//	public void createNewTestWindow() {
+//		Coordinate c = coordinator.getCoordinateForNewWindow();
+//		TestWindow tw = new TestWindow(alphaSystem);
+//		tw.setLocation(c.getX(),c.getY());
+//		tw.addWindowListener(this);
+//		tw.setVisible(true);
+//		addWorkspaceItem(tw);
+//	}
+
+	public void createNewServerStatusFrame() {
+		
+		ServerStatusTableModel sstm = new ServerStatusTableModel();
+		
+		ServerStatusFrame tw = new ServerStatusFrame(sstm);	// A frame has one or more models! each table has one. 
+		
+		Coordinate c = wkspc.getCoordinateForNewWindow();
+		tw.setLocation(c.getX(),c.getY());
+		tw.setVisible(true);
+		wkspc.addWorkspaceItem(tw);
+	}
+	
+	public void createNewStrategyFrame() {
+//		Coordinate c = wkspc.getCoordinateForNewWindow();
+//		
+//		// StrategyDetailTableModel stm = new StrategyDetailTableModel(alphaSystem.getStrategyServerConnection(), "ss-id", null/* final Window pOwner, PositionTableModel pPositionModel*/);
+//		PositionTableModel ptm = new PositionTableModel(alphaSystem.getStrategyServerConnection(), "ptm-id", null/* final Window pOwner, PositionTableModel pPositionModel*/);
+//		StrategyFrame s = new StrategyFrame(ptm);
+//		s.setLocation(c.getX(),c.getY());
+//		
+//		s.setVisible(true);
+//		
+//		wkspc.addWorkspaceItem(s);
+	}
+	
+	
+	public BaseFrame createNewBaseFrame(String type) {
+		BaseFrame bf;
+		Coordinate c = wkspc.getCoordinateForNewWindow();
+		switch (type) {
+			case "OrderTrade":
+				OwnOrderTradesTableModel ootm = new OwnOrderTradesTableModel("any-id");
+				OrderTradeFrame tw = new OrderTradeFrame(ootm);
+				tw.setLocation(c.getX(),c.getY());
+				tw.setVisible(true);
+				wkspc.addWorkspaceItem(tw);
+				bf = tw;
+			break;
+			
+			default:
+				return null;
+		}
+		bf.setLocation(c.getX(),c.getY());
+		bf.setVisible(true);
+		return bf;
 	}
 	
 	/**
@@ -86,80 +200,15 @@ public class ApplicationWindow {
 	    //
 	    //	Open a position window
 	    //
-	    JMenuItem posMenuItem = new JMenuItem("New Position Window");
-	    posMenuItem.addActionListener(new ActionListener() {
+	    JMenuItem orderTradeMenuItem = new JMenuItem("New OrderTrade Window");
+	    orderTradeMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewPositionFrame();
+				BaseFrame bf = createNewBaseFrame("OrderTrade");
+				wkspc.addWorkspaceItem(bf);
 			}
 		});
 
-	    //
-	    //
-	    //
-	    JMenuItem orderMenuItem = new JMenuItem("New Order Window");
-	    orderMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewOrderFrame();
-			}
-		});
-	    
-	    //
-	    //
-	    //
-	    JMenuItem tradeMenuItem = new JMenuItem("New Trade Window");
-	    tradeMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewTradeFrame();
-			}
-		});
-
-	    //
-	    //
-	    //
-	    JMenuItem testMenuItem = new JMenuItem("New Test Window");
-	    testMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewTestWindow();
-			}
-		});
-
-	    //
-	    //
-	    //
-	    JMenuItem eventsMenuItem = new JMenuItem("New Events Window");
-	    eventsMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewEventsFrame();
-			}
-		});
-	    
-	    //
-	    //
-	    //
-	    JMenuItem statusMenuItem = new JMenuItem("New Server Status Window");
-	    statusMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewServerStatusFrame();
-			}
-		});
-	    
-	    //
-	    //
-	    //
-	    JMenuItem strategyMenuItem = new JMenuItem("Strategy Window");
-	    strategyMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				wkspc.createNewStrategyFrame();
-			}
-		});
-	    
 	    //
 	    //
 	    //
@@ -184,28 +233,12 @@ public class ApplicationWindow {
 	    
 	    // build the File menu
 	    JMenu fileMenu = new JMenu("File");
-	    fileMenu.add(posMenuItem);
-	    fileMenu.add(orderMenuItem);
-	    fileMenu.add(tradeMenuItem);
-	    fileMenu.add(testMenuItem);
-	    fileMenu.add(statusMenuItem);
-	    fileMenu.add(eventsMenuItem);
+	    fileMenu.add(orderTradeMenuItem);
 	    fileMenu.add(saveWkspcMenuItem);
 	    fileMenu.add(loadWkspcMenuItem);
-	    fileMenu.add(strategyMenuItem);
 	    
-	    // build the Edit menu
-	    JMenu editMenu = new JMenu("Edit");
-	    JMenuItem cutMenuItem = new JMenuItem("Cut");
-	    JMenuItem copyMenuItem = new JMenuItem("Copy");
-	    JMenuItem pasteMenuItem = new JMenuItem("Paste");
-	    editMenu.add(cutMenuItem);
-	    editMenu.add(copyMenuItem);
-	    editMenu.add(pasteMenuItem);
-	 
 	    // add menus to menubar
 	    menuBar.add(fileMenu);
-	    menuBar.add(editMenu);
 	 
 	    // put the menubar on the frame
 	    frame.setJMenuBar(menuBar);
